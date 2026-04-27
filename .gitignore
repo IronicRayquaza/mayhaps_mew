@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local
+.gemini/
+*.log
+dev_output.txt
+.DS_Store
+*.swp
+.idea/
+.vscode/

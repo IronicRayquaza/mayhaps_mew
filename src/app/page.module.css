@@ -1,142 +1,291 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
-
-  --text-primary: #000;
-  --text-secondary: #666;
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
+.container {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-geist-sans);
+  min-height: 100vh;
+  position: relative;
   background-color: var(--background);
 }
 
-.main {
+.nav {
+  background-color: #050505;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  border-bottom: 1px solid var(--primary);
   display: flex;
-  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1.5rem;
+  z-index: 50;
+  position: sticky;
+  top: 0;
+}
+
+.navLogo {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -0.05em;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.iconButton {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--primary);
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.iconButton:hover {
+  background-color: rgba(221, 183, 255, 0.5);
+  color: white;
+}
+
+.iconButton:active {
+  background-color: var(--primary);
+  color: black;
+}
+
+.terminalButton {
+  background-color: var(--primary);
+  color: black;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 24px;
+}
+
+.window {
+  position: relative;
+  z-index: 10;
   width: 100%;
   max-width: 800px;
+  border: 1px solid var(--primary);
+  background-color: var(--surface);
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  box-shadow: 8px 8px 0px 0px var(--primary);
+}
+
+.windowHeader {
+  border-bottom: 1px solid var(--primary);
+  padding: 0.5rem;
+  display: flex;
   justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
+  align-items: center;
+  background-color: var(--background);
 }
 
-.intro {
+.windowTitle {
+  font-size: 0.875rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.windowControls {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.controlBox {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--primary);
+}
+
+.controlBoxActive {
+  background-color: var(--primary);
+}
+
+.windowContent {
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
+  gap: 1.5rem;
+  position: relative;
 }
 
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
+.ditherAccent {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 64px;
+  height: 64px;
+  opacity: 1;
+  pointer-events: none;
 }
 
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
-}
 
-.intro a {
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.ctas {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
-}
-
-.ctas a {
+.asciiContainer {
   display: flex;
   justify-content: center;
+  padding: 1rem 0;
+}
+
+.ascii {
+  font-size: 12px;
+  color: var(--primary);
+  line-height: 1.1;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+.terminal {
+  border: 1px solid var(--primary);
+  background-color: var(--background);
+  padding: 1rem;
+  height: 180px;
+  overflow-y: auto;
+  font-size: 12px;
+  color: var(--primary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.terminalLine {
+  opacity: 0.7;
+}
+
+.terminalLineActive {
+  opacity: 1;
+}
+
+.terminalInputLine {
+  display: flex;
   align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
+  margin-top: 0.5rem;
+}
+
+.cursor {
+  width: 8px;
+  height: 1rem;
+  background-color: var(--primary);
+  display: inline-block;
+  margin-left: 0.5rem;
+}
+
+.actionBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px dashed var(--primary);
+  padding-top: 1.5rem;
+}
+
+.actionLabel {
+  font-size: 0.875rem;
+  color: var(--primary);
+  text-transform: uppercase;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.button {
+  border: 1px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  padding: 0.5rem 1.5rem;
+  font-size: 0.875rem;
+  text-transform: uppercase;
   cursor: pointer;
-  width: fit-content;
-  font-weight: 500;
+  position: relative;
+  overflow: hidden;
 }
 
-a.primary {
-  background: var(--text-primary);
+.button:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+}
+
+.primaryButton {
+  background-color: var(--primary);
   color: var(--background);
-  gap: 8px;
+  box-shadow: 4px 4px 0px 0px rgba(221, 183, 255, 0.3);
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.primaryButton:hover {
+  background-color: var(--primary-container);
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
+.footer {
+  background-color: #050505;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 1.5rem;
+  z-index: 50;
+  border-top: 1px dashed var(--primary);
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
-  }
-
-  .intro {
-    gap: 16px;
-  }
-
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
+.footerStatus {
+  color: var(--primary);
+  font-weight: bold;
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
+.footerLinks {
+  display: flex;
+  gap: 1rem;
+}
+
+.footerLink {
+  color: var(--primary);
+  opacity: 0.8;
+  text-decoration: none;
+}
+
+.footerLink:hover {
+  opacity: 1;
+  text-decoration: underline dotted;
+}
+
+@media (max-width: 640px) {
+  .actionBar {
+    flex-direction: column;
+    align-items: flex-start;
   }
-
-  .page {
-    --background: #000;
-    --foreground: #000;
-
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+  
+  .buttonGroup {
+    width: 100%;
+  }
+  
+  .button {
+    flex: 1;
+    text-align: center;
   }
 }

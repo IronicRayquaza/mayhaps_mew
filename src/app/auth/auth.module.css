@@ -1,0 +1,241 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: #050505;
+  position: relative;
+}
+
+.mainBox {
+  width: 100%;
+  max-width: 512px;
+  border: 1px solid var(--primary);
+  background-color: var(--surface-container-lowest, #0e0e0e);
+  position: relative;
+  box-shadow: 0 0 15px rgba(221, 183, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  border-bottom: 1px solid var(--primary);
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--surface-container, #201f1f);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.headerControls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.controlBox {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--primary);
+  cursor: pointer;
+}
+
+.controlBoxActive {
+  background-color: var(--primary);
+}
+
+.content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 2rem;
+  }
+}
+
+.asciiSeal {
+  display: flex;
+  justify-content: center;
+  color: rgba(221, 183, 255, 0.8);
+  font-size: 12px;
+  white-space: pre;
+  line-height: 1.2;
+  user-select: none;
+}
+
+.titleArea {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: rgba(221, 183, 255, 0.7);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.divider {
+  font-size: 12px;
+  color: rgba(221, 183, 255, 0.5);
+  letter-spacing: 0.2em;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  color: rgba(221, 183, 255, 0.8);
+  text-transform: uppercase;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputPrompt {
+  color: var(--primary);
+  position: absolute;
+  left: 0;
+  font-size: 12px;
+}
+
+.terminalInput {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--primary);
+  color: var(--primary);
+  outline: none;
+  width: 100%;
+  padding: 0.5rem 0.5rem 0.5rem 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.terminalInput:focus {
+  border-bottom: 2px solid var(--primary);
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: 2rem;
+  border: 1px solid var(--primary);
+  background-color: var(--surface-container-lowest, #0e0e0e);
+  color: var(--primary);
+  padding: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.075s ease;
+}
+
+.submitButton:hover {
+  background-color: var(--primary);
+  color: var(--surface-container-lowest, #0e0e0e);
+}
+
+.submitButton:active {
+  background-color: var(--primary-container);
+}
+
+.buttonText {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.footer {
+  padding-top: 1rem;
+  border-top: 1px dashed var(--primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgba(221, 183, 255, 0.5);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.toggleArea {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: rgba(221, 183, 255, 0.6);
+}
+
+.toggleLink {
+  color: var(--primary);
+  cursor: pointer;
+  text-decoration: underline dotted;
+}
+
+.toggleLink:hover {
+  text-decoration: underline;
+  color: white;
+}
+
+
+.decorativeBinary {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5rem;
+  font-size: 8px;
+  color: rgba(221, 183, 255, 0.3);
+  text-align: right;
+  pointer-events: none;
+  line-height: 1.2;
+}
+
+.decorativeError {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 0.5rem;
+  font-size: 8px;
+  color: rgba(221, 183, 255, 0.3);
+  pointer-events: none;
+}

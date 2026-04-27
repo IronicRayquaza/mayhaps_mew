@@ -1,34 +1,26 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --background: #131313;
+  --foreground: #e5e2e1;
+  --primary: #ddb7ff;
+  --primary-container: #b76dff;
+  --on-primary: #490080;
+  --secondary: #d3bfe2;
+  --secondary-container: #524360;
+  --on-secondary: #382b46;
+  --tertiary: #fabc4e;
+  --tertiary-container: #bd871a;
+  --on-tertiary: #432c00;
+  --surface: #131313;
+  --surface-variant: #353534;
+  --on-surface: #e5e2e1;
+  --on-surface-variant: #cfc2d6;
+  --outline: #988d9f;
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+  
+  --font-main: 'Space Grotesk', sans-serif;
 }
 
 * {
@@ -37,13 +29,57 @@ body {
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+html,
+body {
+  max-width: 100vw;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+body {
+  display: flex;
+  flex-direction: column;
 }
+
+/* Custom scrollbar for terminal vibe */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+  border-left: 1px solid var(--primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+}
+
+.dither-bg {
+  background-image: repeating-linear-gradient(45deg, var(--primary) 25%, transparent 25%, transparent 75%, var(--primary) 75%, var(--primary)), 
+                    repeating-linear-gradient(45deg, var(--primary) 25%, var(--background) 25%, var(--background) 75%, var(--primary) 75%, var(--primary));
+  background-position: 0 0, 2px 2px;
+  background-size: 4px 4px;
+}
+
+.grid-bg {
+  background-image: linear-gradient(to right, rgba(221, 183, 255, 0.25) 1px, transparent 1px), 
+                    linear-gradient(to bottom, rgba(221, 183, 255, 0.25) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s infinite step-end;
+}
+
