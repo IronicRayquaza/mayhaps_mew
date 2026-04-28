@@ -1,6 +1,15 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import styles from "./onboarding.module.css";
 
 export default function OnboardingPage() {
+  const router = useRouter();
+
+  const handleNext = () => {
+    router.push("/dashboard");
+  };
+
   return (
     <div className={styles.container}>
       {/* Background Grid Pattern */}
@@ -96,7 +105,7 @@ export default function OnboardingPage() {
           {/* Actions */}
           <section className={styles.actions}>
             <button className={styles.abortButton}>[ ABORT ]</button>
-            <button className={styles.nextButton}>
+            <button className={styles.nextButton} onClick={handleNext}>
               [ EXECUTE_NEXT ]
               <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
             </button>
