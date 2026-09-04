@@ -26,12 +26,14 @@ export default function AuthPage() {
         const { data, error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
         if (signInErr) throw signInErr;
 
-        // Check if onboarding is complete
+        // A user who has not finished onboarding has no profile row yet. .single()
+        // treats "no rows" as an error and returns 406, so this uses maybeSingle():
+        // a missing row is the normal state here, not a failure.
         const { data: profile } = await supabase
           .from("profiles")
           .select("onboarding_completed")
           .eq("user_id", data.user.id)
-          .single();
+          .maybeSingle();
 
         if (profile?.onboarding_completed) {
           router.push("/dashboard");

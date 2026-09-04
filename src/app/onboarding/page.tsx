@@ -89,21 +89,27 @@ function OnboardingContent() {
         addLog("GITHUB_INSTALLATION_LINKED [OK]");
       }
 
-      // 2. Save email in user_preferences
-      await supabase.from("user_preferences").upsert({
+      // 2. Save email in user_preferences.
+      // These writes previously ignored their error, so a failure looked like
+      // success and left onboarding half-finished — which is how a row-level
+      // security misconfiguration turned into a silent login loop instead of a
+      // visible "permission denied".
+      const { error: prefError } = await supabase.from("user_preferences").upsert({
         user_id: userId,
         email,
         email_enabled: true,
         updated_at: new Date().toISOString()
       }, { onConflict: "user_id" });
+      if (prefError) throw new Error(`Could not save your email: ${prefError.message}`);
       addLog("NOTIFICATION_EMAIL_SAVED [OK]");
 
       // 3. Mark onboarding complete
-      await supabase.from("profiles").upsert({
+      const { error: profileError } = await supabase.from("profiles").upsert({
         user_id: userId,
         onboarding_completed: true,
         updated_at: new Date().toISOString()
       }, { onConflict: "user_id" });
+      if (profileError) throw new Error(`Could not complete onboarding: ${profileError.message}`);
       addLog("ONBOARDING_COMPLETE [OK]");
       addLog("REDIRECTING TO DASHBOARD...");
 
