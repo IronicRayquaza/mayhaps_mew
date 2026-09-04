@@ -1,199 +1,253 @@
-import styles from "./settings.module.css";
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../lib/supabase";
+import styles from "../dashboard/dashboard.module.css";
+
+/**
+ * Settings.
+ *
+ * This page was previously a static mock: a hardcoded "SYS_ADMIN_01" username, a
+ * Slack integration that did not exist, invented connection IDs, and Revoke
+ * buttons wired to nothing. Everything here now reads and writes real rows, and
+ * anything not yet built is absent rather than mocked.
+ */
+
+interface Installation {
+  installation_id: number;
+  account_login: string;
+  account_type: string;
+  repositories_access: string;
+  status: string;
+  installed_at: string;
+}
 
 export default function SettingsPage() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [emailEnabled, setEmailEnabled] = useState(true);
+  const [accountEmail, setAccountEmail] = useState("");
+  const [installations, setInstallations] = useState<Installation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [notice, setNotice] = useState<{ kind: "ok" | "bad"; text: string } | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        router.push("/auth");
+        return;
+      }
+      setAccountEmail(data.user.email ?? "");
+
+      const [prefs, installs] = await Promise.all([
+        supabase
+          .from("user_preferences")
+          .select("email, email_enabled")
+          .eq("user_id", data.user.id)
+          .maybeSingle(),
+        supabase
+          .from("github_installations")
+          .select("installation_id, account_login, account_type, repositories_access, status, installed_at")
+          .eq("user_id", data.user.id),
+      ]);
+
+      const pref = prefs.data as { email?: string; email_enabled?: boolean } | null;
+      setEmail(pref?.email ?? data.user.email ?? "");
+      setEmailEnabled(pref?.email_enabled !== false);
+      setInstallations((installs.data as unknown as Installation[]) ?? []);
+      setLoading(false);
+    })();
+  }, [router]);
+
+  const save = async () => {
+    setSaving(true);
+    setNotice(null);
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) throw new Error("Your session has expired.");
+
+      const { error } = await supabase.from("user_preferences").upsert(
+        {
+          user_id: data.user.id,
+          email,
+          email_enabled: emailEnabled,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" }
+      );
+      if (error) throw new Error(error.message);
+
+      setNotice({ kind: "ok", text: "Saved. Reports will go to this address." });
+    } catch (e) {
+      setNotice({ kind: "bad", text: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/auth");
+  };
+
   return (
     <div className={styles.container}>
-      {/* Top App Bar */}
       <header className={styles.header}>
-        <div className={styles.headerTitle}>DITHER_OS // SYS_ROOT</div>
-        <div className={styles.headerIcons}>
-          <button className={styles.headerIcon}>
-            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>terminal</span>
-          </button>
-          <button className={styles.headerIcon}>
-            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>settings_input_component</span>
-          </button>
-          <button className={styles.headerIcon}>
-            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>power_settings_new</span>
-          </button>
+        <div className={styles.headerLeft}>
+          <span className={styles.logo}>ULLA_BRITTA</span>
+          <span className={styles.headerDivider}>|</span>
+          <span style={{ fontSize: "10px" }}>[SETTINGS]</span>
+        </div>
+        <div className={styles.headerRight}>
+          <span>{accountEmail}</span>
         </div>
       </header>
 
-      {/* Sidebar Navigation (Desktop) */}
-      <nav className={styles.sidebar}>
-        <div className={styles.sidebarHeader}>
-          <h2 className={styles.sidebarTitle}>[CMD_CENTER]</h2>
-          <p className={styles.sidebarSubtitle}>VIRTUAL_STATION_01</p>
-        </div>
-        <div className={styles.navLinks}>
-          <a href="#" className={`${styles.navLink} ${styles.navLinkActive}`}>
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>hub</span>
-            CHANNELS
-          </a>
-          <a href="#" className={styles.navLink}>
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>account_circle</span>
-            ACCOUNT
-          </a>
-          <a href="#" className={styles.navLink}>
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>lock_open</span>
-            SECURITY
-          </a>
-          <a href="#" className={styles.navLink}>
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>settings_suggest</span>
-            SYSTEM
-          </a>
-        </div>
-      </nav>
-
-      {/* Main Content Area */}
-      <main className={styles.main}>
-        {/* Window 1: Channel_Manager.exe */}
-        <section className={styles.window} style={{ maxWidth: '600px' }}>
-          <div className={`${styles.windowHeader} ${styles.accentDither}`}>
-            <span className={styles.windowTitle}>[ CHANNEL_MANAGER.EXE ]</span>
-            <span className="material-symbols-outlined" style={{ fontSize: '14px', cursor: 'pointer' }}>close</span>
+      <main className={`${styles.main} dither-bg`}>
+        <section className={`${styles.logsWindow} animate-slide-down`}>
+          <div className={styles.windowHeader}>
+            <span className={styles.windowTitle}>GITHUB_ACCESS</span>
+            <div className={styles.windowControls}>
+              <span className={`${styles.controlBox} ${styles.controlBoxFilled}`} />
+            </div>
           </div>
-          <div className={styles.windowContent}>
-            <div className={styles.asciiArt}>
-{`+--------------------------------------------------+
-| STATUS: SCANNING INTEGRATIONS... OK.             |
-+--------------------------------------------------+`}
-            </div>
 
-            {/* GitHub Integration */}
-            <div className={styles.integrationCard}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardIdentity}>
-                  <div className={styles.asciiArt} style={{ fontSize: '10px', opacity: 1 }}>
-{` /_/\ 
-( o.o)
- > ^ <`}
-                  </div>
-                  <div>
-                    <h3 className={styles.cardTitle}>[ GITHUB_REPO_SYNC ]</h3>
-                    <p className={styles.cardSubtitle}>Last sync: 02:44:12 SYS_TIME</p>
-                  </div>
-                </div>
-                <span className={`${styles.badge} ${styles.badgeAuthorized}`}>AUTHORIZED</span>
+          <div className={styles.logsContent}>
+            {loading && (
+              <div className={styles.logEntry}>
+                <span className={`${styles.logMessage} ${styles.emptyState}`}>Loading…</span>
               </div>
-              <div className={styles.cardFooter}>
-                <span className={styles.cardId}>ID: gh_8x92j_sys</span>
-                <button className={styles.smallButton}>Revoke</button>
-              </div>
-            </div>
+            )}
 
-            {/* Slack Integration */}
-            <div className={styles.integrationCard}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardIdentity}>
-                  <div className={styles.asciiArt} style={{ fontSize: '10px', opacity: 1 }}>
-{`  #  # 
-#######
-  #  # `}
-                  </div>
-                  <div>
-                    <h3 className={styles.cardTitle}>[ SLACK_WEBHOOK_01 ]</h3>
-                    <p className={styles.cardSubtitle}>Channel: #sys-alerts</p>
-                  </div>
+            {!loading && installations.length === 0 && (
+              <div className={styles.logEntry}>
+                <div className={styles.entryBody}>
+                  <span className={styles.logMessage}>No GitHub account connected.</span>
+                  <span className={`${styles.logMessage} ${styles.entryDetail}`}>
+                    The agent cannot reach any repository until you install the GitHub App.
+                  </span>
+                  <Link href="/onboarding" className={styles.statusOk} style={{ fontSize: "11px" }}>
+                    Connect GitHub →
+                  </Link>
                 </div>
-                <span className={`${styles.badge} ${styles.badgeIdle}`}>IDLE</span>
               </div>
-              <div className={styles.cardFooter}>
-                <span className={styles.cardId}>ID: slk_wh_001</span>
-                <button className={styles.smallButton}>Revoke</button>
+            )}
+
+            {installations.map((install) => (
+              <div key={install.installation_id} className={styles.logEntry}>
+                <span
+                  className={`${styles.logLevel} ${
+                    install.status === "active" ? styles["level-SUCCESS"] : styles["level-WARN"]
+                  }`}
+                >
+                  {install.status === "active" ? "ACTIVE" : install.status.toUpperCase()}
+                </span>
+                <div className={styles.entryBody}>
+                  <span className={styles.logMessage}>
+                    {install.account_login} ({install.account_type})
+                  </span>
+                  <span className={`${styles.logMessage} ${styles.entryDetail}`}>
+                    {install.repositories_access === "all"
+                      ? "all repositories"
+                      : "selected repositories"}
+                    {" · installation "}
+                    {install.installation_id}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {!loading && installations.length > 0 && (
+              <div className={styles.logEntry}>
+                <span className={`${styles.logMessage} ${styles.entryDetail}`}>
+                  Access is managed on GitHub. Change or remove it at{" "}
+                  <a
+                    href="https://github.com/settings/installations"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.statusOk}
+                  >
+                    github.com/settings/installations
+                  </a>
+                  .
+                </span>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className={`${styles.chatWindow} dither-bg animate-slide-up`}>
+          <div className={styles.windowHeader}>
+            <span className={styles.windowTitle}>NOTIFICATIONS</span>
+          </div>
+
+          <div className={styles.chatContent}>
+            <div className={styles.entryBody} style={{ gap: "1rem", padding: "0.5rem" }}>
+              <label className={styles.messageMeta} htmlFor="report-email">
+                Where reports are sent
+              </label>
+              <input
+                id="report-email"
+                className={styles.chatInput}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                style={{ width: "100%" }}
+              />
+
+              <label className={styles.messageMeta} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                <input
+                  type="checkbox"
+                  checked={emailEnabled}
+                  onChange={(e) => setEmailEnabled(e.target.checked)}
+                />
+                Send me email reports
+              </label>
+
+              {notice && (
+                <span className={notice.kind === "ok" ? styles.statusOk : styles.statusBad}>
+                  {notice.text}
+                </span>
+              )}
+
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <button className={styles.transmitButton} onClick={save} disabled={saving || loading}>
+                  {saving ? "Saving…" : "Save"}
+                </button>
+                <button className={styles.cancelButton} onClick={signOut}>
+                  SIGN OUT
+                </button>
               </div>
             </div>
           </div>
         </section>
-
-        {/* Window 2: Account_Prefs.sys */}
-        <section className={styles.window} style={{ maxWidth: '500px' }}>
-          <div className={`${styles.windowHeader} ${styles.accentDither}`}>
-            <span className={styles.windowTitle}>[ ACCOUNT_PREFS.SYS ]</span>
-            <span className="material-symbols-outlined" style={{ fontSize: '14px', cursor: 'pointer' }}>close</span>
-          </div>
-          <div className={styles.windowContent}>
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>[ INPUT_USER_NAME ]</label>
-              <div className={styles.inputWrapper}>
-                <span className={styles.inputPrompt}>&gt;</span>
-                <input className={styles.terminalInput} type="text" defaultValue="SYS_ADMIN_01" />
-              </div>
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>[ API_KEY_PRIMARY ]</label>
-              <div className={styles.inputWrapper}>
-                <span className={styles.inputPrompt}>&gt;</span>
-                <input className={styles.terminalInput} type="password" defaultValue="************************" />
-              </div>
-              <span className={styles.regenLink}>[ REGENERATE_KEY ]</span>
-            </div>
-
-            <div className={styles.asciiArt} style={{ opacity: 0.3 }}>
-              --------------------------------------------------
-            </div>
-
-            <div className={styles.inputGroup} style={{ gap: '1rem' }}>
-              <label className={styles.inputLabel}>[ NOTIFICATION_FLAGS ]</label>
-              
-              <div className={styles.flagRow}>
-                <span>&gt; SYSTEM_ALERTS</span>
-                <div className={`${styles.toggleContainer} ${styles.accentDither}`}>
-                  <div className={`${styles.toggleInner} ${styles.toggleInnerRight}`} />
-                </div>
-              </div>
-
-              <div className={styles.flagRow}>
-                <span>&gt; LOGIN_NOTIFY</span>
-                <div className={`${styles.toggleContainer} ${styles.accentDither}`}>
-                  <div className={`${styles.toggleInner} ${styles.toggleInnerRight}`} />
-                </div>
-              </div>
-
-              <div className={styles.flagRow} style={{ opacity: 0.5 }}>
-                <span>&gt; VERBOSE_LOGGING</span>
-                <div className={styles.toggleContainer}>
-                  <div className={`${styles.toggleInner} ${styles.toggleInnerLeft}`} style={{ backgroundColor: 'var(--primary)' }} />
-                </div>
-              </div>
-            </div>
-
-            <button className={styles.saveButton}>
-              <span className="material-symbols-outlined">save</span>
-              SAVE_CONFIG
-            </button>
-          </div>
-        </section>
-
-        {/* Floating Terminal Indicator */}
-        <div className={styles.floatingTerminal}>
-          sys_root@dither_os:~$ <span className={`${styles.terminalCursor} cursor-blink`} />
-        </div>
       </main>
 
-      {/* Bottom Navigation (Mobile) */}
-      <nav className={styles.bottomNav}>
-        <a href="#" className={styles.bottomLink}>
-          <span className="material-symbols-outlined">grid_view</span>
-          ROOT
-        </a>
-        <a href="#" className={`${styles.bottomLink} ${styles.bottomLinkActive}`}>
-          <span className="material-symbols-outlined">lan</span>
-          NET
-        </a>
-        <a href="#" className={styles.bottomLink}>
-          <span className="material-symbols-outlined">folder</span>
-          DISK
-        </a>
-        <a href="#" className={styles.bottomLink}>
-          <span className="material-symbols-outlined">terminal</span>
-          X-TERM
-        </a>
-        <a href="#" className={styles.bottomLink}>
-          <span className="material-symbols-outlined">fingerprint</span>
-          ID
-        </a>
+      <nav className={`${styles.bottomNav} animate-slide-up`}>
+        <Link href="/runs" style={{ textDecoration: "none" }}>
+          <button className={styles.navButton}>
+            <span className="material-symbols-outlined">history</span>
+            <span className={styles.navLabel}>RUNS</span>
+          </button>
+        </Link>
+        <Link href="/dashboard" style={{ textDecoration: "none" }}>
+          <button className={styles.navButton}>
+            <span className="material-symbols-outlined">memory</span>
+            <span className={styles.navLabel}>AGENT</span>
+          </button>
+        </Link>
+        <button className={`${styles.navButton} ${styles.navButtonActive}`}>
+          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+            settings
+          </span>
+          <span className={styles.navLabel}>SETTINGS</span>
+        </button>
       </nav>
     </div>
   );

@@ -6,7 +6,7 @@ export default function Home() {
     <div className={styles.container}>
       {/* TopAppBar */}
       <nav className={styles.nav}>
-        <div className={styles.navLogo}>DITHER_OS_v1.0</div>
+        <div className={styles.navLogo}>ULLA_BRITTA_v1.0</div>
         <div className={styles.navActions}>
           <button className={styles.iconButton}>
             <span className="material-symbols-outlined">memory</span>
@@ -30,7 +30,7 @@ export default function Home() {
           {/* Window Header */}
           <div className={styles.windowHeader}>
             <div className={styles.windowTitle}>
-              [ SYSTEM_PROCESS: NEURAL_FLOW_INIT.EXE ]
+              [ SYSTEM_PROCESS: ULLA_BRITTA_INIT.EXE ]
             </div>
             <div className={styles.windowControls}>
               <div className={styles.controlBox} />
@@ -47,17 +47,17 @@ export default function Home() {
             <div className={styles.asciiContainer}>
               <pre className={styles.ascii}>
 {`+=================================================+
-|   ///      ///      ///      ///      ///       |
-|  ///      ///      ///      ///      ///        |
-| ///      ///      ///      ///      ///         |
+|   U   U   L   L   A       B   R   I   T   T   A   |
+|   U   U   L   L   A       B   R   I   T   T   A   |
+|   U   U   L   L   A       B   R   I   T   T   A   |
 +=================================================+
           |                              |         
-          |      [ N E U R A L ]         |         
-          |       [ F L O W ]            |         
+          |      [ U L L A ]             |         
+          |      [ B R I T T A ]         |         
           |                              |         
 +=================================================+
-| \\\\\\\\\\\\   \\\\\\\\\\\\   \\\\\\\\\\\\   \\\\\\\\\\\\   \\\\\\\\\\\\      |
-|  \\\\\\\\\\\\   \\\\\\\\\\\\   \\\\\\\\\\\\   \\\\\\\\\\\\   \\\\\\\\\\\\     |
+|   U   U   L   L   A       B   R   I   T   T   A   |
+|   U   U   L   L   A       B   R   I   T   T   A   |
 +=================================================+`}
               </pre>
             </div>
@@ -66,8 +66,8 @@ export default function Home() {
             <div className={styles.terminal}>
               <div className={styles.terminalLine}>&gt; KERNEL LOADED. VER: 9.4.1-STABLE</div>
               <div className={styles.terminalLine}>&gt; MOUNTING VFS... [OK]</div>
-              <div className={styles.terminalLine}>&gt; INITIALIZING DITHER_OS DISPLAY PROTOCOLS... [OK]</div>
-              <div className={styles.terminalLineActive}>&gt; ESTABLISHING SECURE CONNECTION TO NEURAL GRID...</div>
+              <div className={styles.terminalLine}>&gt; INITIALIZING ULLA_BRITTA DISPLAY PROTOCOLS... [OK]</div>
+              <div className={styles.terminalLineActive}>&gt; ESTABLISHING SECURE CONNECTION TO ULLA_NET...</div>
               <div className={styles.terminalLineActive}>&gt; ALLOCATING SYNAPTIC MEMORY BLOCKS... [0x7F8C4A]</div>
               <div className={styles.terminalLineActive}>
                 &gt; SCANNING FOR EXTERNAL STIMULI...{" "}
@@ -78,7 +78,7 @@ export default function Home() {
                 &gt; SYSTEM READY FOR MANUAL INITIALIZATION.
               </div>
               <div className={styles.terminalInputLine}>
-                <span>root@neural-flow:~#</span>
+                <span>root@ulla-britta:~#</span>
                 <div className={`${styles.cursor} cursor-blink`} />
               </div>
             </div>

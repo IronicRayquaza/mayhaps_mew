@@ -8,8 +8,11 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "DITHER_OS_v1.0 // NEURAL_FLOW_INIT.EXE",
-  description: "Ditherized Operating System Interface",
+  title: "ULLA_BRITTA_v1.0 // SMART_SRE_AGENT.EXE",
+  description: "Ulla Britta - Your Autonomous Smart SRE Agent",
+  icons: {
+    icon: "/3451574.png",
+  },
 };
 
 export default function RootLayout({
@@ -25,7 +28,10 @@ export default function RootLayout({
           rel="stylesheet" 
         />
       </head>
-      <body>{children}</body>
+      <body className="flicker">
+        <div className="scanline" />
+        {children}
+      </body>
     </html>
   );
 }
