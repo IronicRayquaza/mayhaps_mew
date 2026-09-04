@@ -1,4 +1,20 @@
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
+
+/**
+ * Browser Supabase client.
+ *
+ * This previously used a hand-rolled cookie storage that wrote the whole session
+ * into a single cookie. A real session here is about 5KB, and browsers silently
+ * drop any cookie over 4096 bytes — so the session was never persisted. Signing in
+ * appeared to work (the client keeps it in memory for that page load) and then every
+ * protected route bounced straight back to /auth, because the server could not see
+ * it.
+ *
+ * createBrowserClient splits the session across numbered chunks
+ * (sb-<ref>-auth-token.0, .1, …) and reassembles them on read, matching what
+ * createServerClient expects in the middleware. Both halves have to use this
+ * package, or one writes a format the other cannot read.
+ */
 
 /**
  * Minimal schema shape for the tables the dashboard touches.
@@ -26,51 +42,13 @@ export type Database = {
   };
 };
 
-// Singleton Supabase browser client — uses anon key only (safe for frontend)
-// Service role key must NEVER be used in frontend code.
-let client: ReturnType<typeof createClient<Database>> | null = null;
-
-const customCookieStorage = {
-  getItem: (key: string) => {
-    if (typeof document === 'undefined') return null;
-    const name = key + "=";
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return null;
-  },
-  setItem: (key: string, value: string) => {
-    if (typeof document === 'undefined') return;
-    // Set cookie that is accessible to all paths
-    document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=31536000; SameSite=Lax; Secure`;
-  },
-  removeItem: (key: string) => {
-    if (typeof document === 'undefined') return;
-    document.cookie = `${key}=; path=/; max-age=-99999999;`;
-  }
-};
+let client: ReturnType<typeof createBrowserClient<Database>> | null = null;
 
 export function getSupabase() {
   if (!client) {
-    client = createClient<Database>(
+    client = createBrowserClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        auth: {
-          storage: customCookieStorage,
-          autoRefreshToken: true,
-          persistSession: true,
-          detectSessionInUrl: true
-        }
-      }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
   }
   return client;

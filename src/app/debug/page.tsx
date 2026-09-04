@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
 
 /**
  * TEMPORARY diagnostic — delete once the login loop is fixed.
@@ -28,22 +28,18 @@ export default async function DebugPage() {
   let storageKeyRead: string | null = null;
 
   try {
-    const supabase = createClient(
+    // Mirrors middleware.ts exactly, so this page reports what it actually sees.
+    const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
-        auth: {
-          persistSession: true,
-          detectSessionInUrl: false,
-          storage: {
-            getItem: (key: string) => {
-              storageKeyRead = key;
-              const cookie = jar.get(key);
-              if (!cookie) return null;
-              return decodeURIComponent(cookie.value);
-            },
-            setItem: () => {},
-            removeItem: () => {},
+        cookies: {
+          getAll() {
+            storageKeyRead = "getAll() — chunk-aware";
+            return jar.getAll();
+          },
+          setAll() {
+            // A page cannot set cookies; a refresh here is simply not persisted.
           },
         },
       }
