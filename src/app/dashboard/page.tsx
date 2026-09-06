@@ -455,13 +455,26 @@ export default function DashboardPage() {
             {messages.length === 0 && (
               <div className={`${styles.message} ${styles.messageAgent}`}>
                 <div className={styles.messageBubble}>
+                  {/*
+                    These suggestions are the only signal most people get about
+                    what the agent can reach. They listed repositories, pull
+                    requests and dependencies long after the tool surface had
+                    grown past that, so people asked for things they assumed were
+                    impossible and never tried the rest. One per area it covers.
+                  */}
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {[
                       "I operate your GitHub account. Try:",
                       "",
-                      "- `list my repositories`",
-                      "- `review the open pull requests on owner/repo`",
-                      "- `check dependencies for owner/repo`",
+                      "- `what repositories can you see?`",
+                      "- `do I have any open pull requests anywhere?`",
+                      "- `why did CI fail on owner/repo?` — I read the actual job log",
+                      "- `open an issue on owner/repo about the stale cache`",
+                      "- `what changed in the last release of owner/repo?`",
+                      "- `how many followers do I have?`",
+                      "",
+                      "I can also write files, open and merge pull requests, cut releases,",
+                      "trigger workflows and create repositories — I'll say before I do.",
                       "",
                       "I report what I actually did, including anything that failed.",
                     ].join("\n")}

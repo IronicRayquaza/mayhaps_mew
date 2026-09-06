@@ -212,9 +212,20 @@ export default function SettingsPage() {
             {!loading && installations.length === 0 && (
               <div className={styles.logEntry}>
                 <div className={styles.entryBody}>
-                  <span className={styles.logMessage}>No GitHub account connected.</span>
+                  <span className={styles.logMessage}>
+                    No GitHub installation on this login{accountEmail ? ` (${accountEmail})` : ""}.
+                  </span>
+                  {/*
+                    An installation belongs to one dashboard login, not to a GitHub
+                    account. Signing up twice leaves the app installed and this page
+                    empty, and "install the GitHub App" is the wrong instruction —
+                    they already did.
+                  */}
                   <span className={`${styles.logMessage} ${styles.entryDetail}`}>
-                    The agent cannot reach any repository until you install the GitHub App.
+                    If you connected GitHub while signed in under a different email, sign in with
+                    that one — the installation stays with the login that created it. Otherwise
+                    connect it here; reinstalling while signed in as {accountEmail || "this user"}{" "}
+                    moves it to this login.
                   </span>
                   <Link href="/onboarding" className={styles.statusOk} style={{ fontSize: "11px" }}>
                     Connect GitHub →

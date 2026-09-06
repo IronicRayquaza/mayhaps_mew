@@ -172,10 +172,29 @@ function OnboardingContent() {
               <h2 className={styles.stepTitle}>
                 <span className={styles.stepNumber}>01.</span> LINK_GITHUB_APP
               </h2>
+              {/*
+                Both of the ways this goes wrong start on this screen, so both are
+                said here rather than discovered later: picking "only select
+                repositories" leaves the agent blind to the rest (it reports that
+                as no access, not as a missing repo), and the installation binds to
+                the dashboard login signed in right now, so a second sign-up leaves
+                the app installed and the new login with nothing.
+              */}
               <p style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
-                Install the Ulla Britta GitHub App on your account. This grants Ulla access to push files, 
-                review PRs, and monitor your repositories. You can choose which repos to include.
+                Install the Ulla Britta GitHub App on your account. This grants Ulla access to push files,
+                review PRs, open issues, read CI logs, and monitor your repositories.
               </p>
+              <p style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
+                Choose <strong>All repositories</strong> unless you have a reason not to — Ulla cannot see
+                anything you leave out, and will say it has no access rather than guess. You can change
+                this later on GitHub.
+              </p>
+              {email && (
+                <p style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
+                  This installation will be linked to <strong>{email}</strong>. Signing in with a different
+                  email later gives you a separate account with no access until you install again from it.
+                </p>
+              )}
 
               {githubLinked ? (
                 <div style={{ color: 'var(--success)', fontFamily: 'monospace', fontSize: '12px', padding: '10px', border: '1px solid var(--success)', background: 'rgba(0,255,0,0.05)' }}>
